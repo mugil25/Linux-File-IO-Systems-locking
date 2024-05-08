@@ -27,21 +27,57 @@ Execute the C Program for the desired output.
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
-int main()
-{
-char block[1024];
-int in, out;
-int nread;
-in = open("filecopy.c", O_RDONLY);
-out = open("file.out", O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
-while((nread = read(in,block,sizeof(block))) > 0)
-write(out,block,nread);
-exit(0);}
+#include <stdio.h> // Include for debugging
+
+int main() {
+    char block[1024];
+    int in, out;
+    int nread;
+
+    // Open input file
+    in = open("filecopy.c", O_RDONLY);
+    if (in == -1) {
+        perror("Error opening input file");
+        exit(1);
+    }
+    printf("Input file opened successfully\n");
+
+    // Open or create output file
+    out = open("file.out", O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
+    if (out == -1) {
+        perror("Error opening/creating output file");
+        exit(1);
+    }
+    printf("Output file opened/created successfully\n");
+
+    // Read from input file and write to output file
+    while ((nread = read(in, block, sizeof(block))) > 0) {
+        printf("Read %d bytes from input file\n", nread);
+        if (write(out, block, nread) != nread) {
+            perror("Error writing to output file");
+            exit(1);
+        }
+        printf("Wrote %d bytes to output file\n", nread);
+    }
+
+    if (nread == -1) {
+        perror("Error reading from input file");
+        exit(1);
+    }
+
+    printf("End of input file\n");
+
+    // Close files
+    close(in);
+    close(out);
+
+    printf("Files closed successfully\n");
+
+    exit(0);
+}
 ```
 ## OUTPUT
-```
--rwxr-xr-x    1 root     root         18348 Apr 17 14:14 file.o
-```
+![WhatsApp Image 2024-05-08 at 15 12 04_719fc690](https://github.com/mugil25/Linux-File-IO-Systems-locking/assets/148515771/1404b2b0-2949-41d4-8f78-f66efa483ca5)
 
 
 ## 2.To Write a C program that illustrates files locking
@@ -88,9 +124,8 @@ return 0;
 
 
 ## OUTPUT
-```
--rwxr-xr-x    1 root     root         18376 Apr 17 14:20 text.o
-```
+![WhatsApp Image 2024-05-08 at 15 12 04_60cf57ea](https://github.com/mugil25/Linux-File-IO-Systems-locking/assets/148515771/cac072fe-aedb-4df8-9854-a5e07bbcbd8c)
+
 
 
 
